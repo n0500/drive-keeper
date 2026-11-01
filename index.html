@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="حافظة الدرايف">
+<meta name="theme-color" content="#0f766e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>حافظة الدرايف</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#17202a;--muted:#64748b;--line:#e2e8f0;--accent:#0f766e;--soft:#e6f6f4;--danger:#b42318;--radius:16px;--shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1417;--card:#182024;--ink:#e8eef1;--muted:#94a3b8;--line:#26323a;--soft:#12302d;--accent:#14b8a6;--shadow:none}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Arabic","Segoe UI",Tahoma,sans-serif;font-size:16px;line-height:1.6}
+button,input{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:calc(env(safe-area-inset-top) + 12px) 20px 12px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:12px;max-width:1200px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;flex:1}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--accent);display:grid;place-items:center;color:#fff}
+.net{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.net i{width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block}
+.net.off i{background:#d97706}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;cursor:pointer}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin:12px auto 0;align-items:center;max-width:1200px}
+.search{flex:1;min-width:220px;position:relative}
+.search input{width:100%;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);padding:0 42px 0 12px;-webkit-appearance:none;appearance:none}
+.search svg{position:absolute;right:12px;top:11px;color:var(--muted)}
+.btn{height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5}
+main{padding:16px 20px calc(env(safe-area-inset-bottom) + 110px);max-width:1240px;margin:0 auto}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px;font-size:15px;margin-bottom:14px;min-height:36px}
+.crumbs button{border:0;background:none;padding:6px 8px;border-radius:8px;cursor:pointer;color:var(--muted)}
+.crumbs button:last-of-type{color:var(--ink);font-weight:700}
+.crumbs .sep{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.card{position:relative;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:10px;min-height:160px;user-select:none;-webkit-user-select:none;transition:transform .1s}
+.card:active{transform:scale(.98)}
+.thumb{height:86px;border-radius:12px;display:grid;place-items:center;background:var(--soft);overflow:hidden;position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .lbl{position:absolute;bottom:6px;right:6px;font-size:11px;font-weight:700;color:#fff;padding:0 7px;border-radius:6px}
+.name{font-weight:600;font-size:15px;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.45}
+.meta{font-size:12.5px;color:var(--muted);margin-top:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.more{position:absolute;top:6px;left:6px;width:38px;height:38px;border-radius:10px;border:0;background:var(--card);opacity:.92;display:grid;place-items:center;cursor:pointer;z-index:1}
+.badge{font-size:11px;background:var(--soft);color:var(--accent);padding:0 8px;border-radius:99px;font-weight:700}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty h2{color:var(--ink);font-size:20px;margin:12px 0 6px}
+.empty .actions{justify-content:center}
+.hint{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.hint .x{margin-inline-start:auto;border:0;background:none;color:var(--muted);cursor:pointer;padding:0 4px}
+.overlay{position:fixed;inset:0;background:rgba(10,15,20,.45);display:none;align-items:center;justify-content:center;z-index:20;padding:20px}
+.overlay.show{display:flex}
+.sheet{background:var(--card);border-radius:20px;width:min(560px,100%);max-height:88vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.sheet h3{margin:0 0 6px;font-size:19px}
+.sheet p{margin:6px 0;color:var(--muted);font-size:14.5px}
+.field{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;margin:10px 0;direction:ltr;text-align:left}
+.field.rtl{direction:rtl;text-align:right}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.menu button{display:flex;width:100%;align-items:center;gap:12px;border:0;background:none;padding:13px 6px;border-bottom:1px solid var(--line);cursor:pointer;font-size:16px;text-align:right}
+.menu button:last-child{border-bottom:0}
+.progress{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:14px 0 8px}
+.progress div{height:100%;width:0;background:var(--accent);transition:width .2s}
+#pSub{direction:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14.5px;margin-top:4px}
+ol.steps{padding-inline-start:22px;margin:8px 0;font-size:14.5px}
+ol.steps li{margin:5px 0}
+code{direction:ltr;unicode-bidi:embed;background:var(--bg);padding:1px 6px;border-radius:6px;font-size:13px;word-break:break-all}
+.section{border-top:1px solid var(--line);padding-top:14px;margin-top:16px}
+.credit{font-size:13px;color:var(--muted);text-align:center;margin-top:18px}
+.usage{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0}
+.usage div{height:100%;background:var(--accent)}
+.viewer{position:fixed;inset:0;background:var(--bg);z-index:30;display:none;flex-direction:column}
+.viewer.show{display:flex}
+.vhead{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;border-bottom:1px solid var(--line);background:var(--card)}
+.vhead .t{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbody{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;-webkit-overflow-scrolling:touch}
+.vbody img,.vbody video{max-width:100%;max-height:100%}
+.vbody iframe{width:100%;height:100%;border:0;background:#fff}
+.vbody pre{align-self:stretch;width:100%;margin:0;padding:20px;white-space:pre-wrap;word-break:break-word;unicode-bidi:plaintext;text-align:start;font-size:15px}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 20px);left:50%;transform:translate(-50%,150px);background:#17202a;color:#fff;padding:12px 18px;border-radius:12px;z-index:40;transition:transform .25s;max-width:90%;font-size:15px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.toast.show{transform:translate(-50%,0)}
+.stats{color:var(--muted);font-size:13px;margin-top:22px;text-align:center}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:12px auto 0;max-width:1200px;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;font-weight:600;white-space:nowrap}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip.ghost{border-style:dashed;color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.row .crumbs{flex:1;margin:0}
+.sortsel{height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);padding:0 10px;font:inherit;font-size:14px;color:var(--ink)}
+.btn.small{height:40px;padding:0 12px;font-size:14px}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.tagpill{font-size:11px;font-weight:700;padding:0 8px;border-radius:99px;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}
+.star{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:#f59e0b;z-index:1;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+body.selecting .toast{bottom:calc(env(safe-area-inset-bottom) + 96px)}
+.card.sel{outline:3px solid var(--accent);outline-offset:-1px}
+.check{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:50%;border:2px solid var(--muted);background:var(--card);display:grid;place-items:center;z-index:1;color:transparent}
+.card.sel .check{background:var(--accent);border-color:var(--accent);color:#fff}
+.selbar{position:fixed;left:50%;transform:translate(-50%,180%);bottom:calc(env(safe-area-inset-bottom) + 16px);background:var(--card);border:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.18);border-radius:18px;padding:10px;display:flex;gap:8px;align-items:center;z-index:15;transition:transform .2s;max-width:calc(100% - 24px);overflow-x:auto}
+.selbar.show{transform:translate(-50%,0)}
+.selbar .count{font-weight:700;padding:0 8px;white-space:nowrap}
+.tagpick{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.tagbtn{height:38px;padding:0 12px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:600}
+.tagbtn i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.tagbtn.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c)}
+.tagbtn.part{border-color:var(--c);border-style:dashed}
+.colors{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px}
+.color{width:32px;height:32px;border-radius:50%;border:3px solid var(--card);outline:2px solid transparent;cursor:pointer}
+.color.on{outline-color:var(--ink)}
+.tagrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.tagrow .dot{width:28px;height:28px;border-radius:50%;border:0;cursor:pointer;flex:none}
+.tagrow .n{flex:1;font-weight:600;word-break:break-word}
+.pick .crumbs{margin:8px 0}
+@media (max-width:600px){.bar .btn span{display:none}.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand"><div class="logo" id="logo"></div>حافظة الدرايف</div>
+    <div class="net" id="net"><i></i><span>متصل</span></div>
+    <button class="iconbtn" id="settingsBtn" aria-label="الإعدادات"></button>
+  </div>
+  <div class="bar">
+    <div class="search"><span id="searchIc"></span><input id="q" type="search" placeholder="البحث في جميع الملفات المحفوظة" autocomplete="off"></div>
+    <button class="btn primary" id="driveBtn"></button>
+    <button class="btn" id="filesBtn"></button>
+    <button class="btn" id="newFolderBtn"></button>
+  </div>
+  <div class="chips" id="chips"></div>
+</header>
+<main>
+  <div id="installHint"></div>
+  <div class="row">
+    <nav class="crumbs" id="crumbs"></nav>
+    <select class="sortsel" id="sort" aria-label="الترتيب">
+      <option value="name">الترتيب: الاسم</option>
+      <option value="new">الترتيب: الأحدث إضافة</option>
+      <option value="size">الترتيب: الحجم</option>
+      <option value="type">الترتيب: النوع</option>
+    </select>
+    <button class="btn small" id="selBtn"></button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div id="empty"></div>
+  <div class="stats" id="stats"></div>
+</main>
+<input type="file" id="fileInput" multiple hidden>
+<input type="file" id="dirInput" multiple webkitdirectory hidden>
+<input type="file" id="restoreInput" accept=".zip,application/zip" hidden>
+<div class="selbar" id="selbar"></div>
+<div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
+<div class="viewer" id="viewer">
+  <div class="vhead">
+    <button class="iconbtn" id="vClose" aria-label="إغلاق"></button>
+    <div class="t" id="vTitle"></div>
+    <button class="btn" id="vOpen"></button>
+    <button class="btn primary" id="vShare"></button>
+  </div>
+  <div class="vbody" id="vbody"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- أدوات عامة ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k){ try { return localStorage.getItem(k) || ''; } catch { return ''; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch {} }
+};
+const uid = () => (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+const LS = { cid:'dk.clientId', hint:'dk.hintClosed' };
+const FOLDER_MIME = 'application/vnd.google-apps.folder';
+const EXPORTABLE = new Set([
+  'application/vnd.google-apps.document',
+  'application/vnd.google-apps.spreadsheet',
+  'application/vnd.google-apps.presentation',
+  'application/vnd.google-apps.drawing'
+]);
+const API = 'https://www.googleapis.com/drive/v3/files';
+
+const P = {
+  folder:'<path fill="currentColor" stroke="none" d="M3 6.5A2.5 2.5 0 0 1 5.5 4h3.6c.66 0 1.3.26 1.77.73L12.3 6.2h6.2A2.5 2.5 0 0 1 21 8.7v8.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/>',
+  file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  cloud:'<path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5a4 4 0 0 1 0 8.5z"/><path d="M12 10.5v6m-2.5-2.5 2.5 2.5 2.5-2.5"/>',
+  upload:'<path d="M12 15V4m-4 4 4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  more:'<circle cx="5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="19" cy="12" r="1.4" fill="currentColor"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  share:'<path d="M12 3v12m-4-8 4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>',
+  open:'<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  refresh:'<path d="M20 11a8 8 0 0 0-14.6-4.5L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.6 4.5L20 16"/><path d="M20 20v-4h-4"/>',
+  newfolder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6m-3-3h6"/>',
+  files:'<path d="M8 3h7l4 4v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M3 8v11a2 2 0 0 0 2 2h9"/>',
+  unzip:'<path d="M4 8h16v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M3 4h18v4H3zM12 11v6m-3-3 3 3 3-3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  check:'<path d="m5 12 5 5 9-10"/>',
+  star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+  starfill:'<path fill="currentColor" d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  tag:'<path d="M3 12V4h8l9 9-8 8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',
+  move:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m13 10-3 3 3 3M10 13h6"/>',
+  select:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 3 3 5-6"/>',
+  backup:'<path d="M12 3v12m-4-4 4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>',
+  locate:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/>'
+};
+const ic = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+
+function fmtSize(b){
+  b = b || 0;
+  if (b < 1024) return b + ' بايت';
+  const u = ['كيلوبايت','ميغابايت','غيغابايت']; let i = -1;
+  do { b /= 1024; i++; } while (b >= 1024 && i < u.length - 1);
+  return (b >= 100 ? b.toFixed(0) : b.toFixed(1)) + ' ' + u[i];
+}
+const fmtDate = t => { try { return new Date(t).toLocaleString('ar-u-nu-latn', {dateStyle:'medium', timeStyle:'short'}); } catch { return ''; } };
+function countLabel(n){
+  if (n === 0) return 'فارغ';
+  if (n === 1) return 'عنصر واحد';
+  if (n === 2) return 'عنصران';
+  if (n <= 10) return n + ' عناصر';
+  return n + ' عنصرًا';
+}
+const norm = s => String(s).toLowerCase().replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه');
+
+const EXT_MIME = {pdf:'application/pdf',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',heic:'image/heic',mp4:'video/mp4',mov:'video/quicktime',m4v:'video/mp4',mp3:'audio/mpeg',m4a:'audio/mp4',wav:'audio/wav',txt:'text/plain',csv:'text/csv',json:'application/json',html:'text/html',
+  doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xls:'application/vnd.ms-excel',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',ppt:'application/vnd.ms-powerpoint',zip:'application/zip',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation'};
+const guessMime = name => EXT_MIME[(name.split('.').pop() || '').toLowerCase()] || 'application/octet-stream';
+
+function kind(mime = ''){
+  if (mime.startsWith('image/')) return 'image';
+  if (mime.startsWith('video/')) return 'video';
+  if (mime.startsWith('audio/')) return 'audio';
+  if (mime === 'application/pdf') return 'pdf';
+  if (/^application\/(x-)?zip(-compressed)?$/.test(mime)) return 'zip';
+  if (mime.startsWith('text/') || /json|xml/.test(mime)) return 'text';
+  if (/sheet|excel/.test(mime)) return 'sheet';
+  if (/presentation|powerpoint/.test(mime)) return 'slides';
+  if (/word|document/.test(mime)) return 'doc';
+  return 'other';
+}
+const KIND = {image:['صورة','#7c3aed'],video:['فيديو','#ea580c'],audio:['صوت','#db2777'],pdf:['PDF','#dc2626'],text:['نص','#475569'],doc:['مستند','#2563eb'],sheet:['جدول','#16a34a'],slides:['عرض','#d97706'],zip:['مضغوط','#0891b2'],other:['ملف','#64748b']};
+
+/* ---------- قاعدة البيانات المحلية (IndexedDB) ---------- */
+let db;
+function openDB(){
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('drive-keeper', 2);
+    r.onupgradeneeded = e => {
+      const d = r.result;
+      if (e.oldVersion < 1) {
+        const s = d.createObjectStore('items', {keyPath:'id'});
+        s.createIndex('parent', 'parentId');
+        s.createIndex('driveId', 'driveId');
+        d.createObjectStore('blobs');
+      }
+      if (e.oldVersion < 2) d.createObjectStore('meta');
+    };
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+const rq = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const done = t => new Promise((res, rej) => { t.oncomplete = () => res(); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error || new Error('aborted')); });
+const os = (name, mode = 'readonly') => db.transaction(name, mode).objectStore(name);
+const getItem = id => rq(os('items').get(id));
+const children = pid => rq(os('items').index('parent').getAll(pid));
+const countChildren = pid => rq(os('items').index('parent').count(pid));
+const allItems = () => rq(os('items').getAll());
+const getBlob = id => rq(os('blobs').get(id));
+const getTags = async () => (await rq(os('meta').get('tags'))) || [];
+async function saveTags(t){ const x = db.transaction('meta', 'readwrite'); x.objectStore('meta').put(t, 'tags'); await done(x); }
+async function pathOf(id){
+  const path = []; let cur = id;
+  while (cur && cur !== 'root') { const it = await getItem(cur); if (!it) break; path.unshift(it); cur = it.parentId; }
+  return path;
+}
+const getByDrive = did => rq(os('items').index('driveId').getAll(did));
+
+async function putItem(item, blob){
+  const t = db.transaction(['items','blobs'], 'readwrite');
+  t.objectStore('items').put(item);
+  if (blob) t.objectStore('blobs').put(blob, item.id);
+  try { await done(t); }
+  catch (e) {
+    if (e && (e.name === 'QuotaExceededError' || /quota/i.test(e.message || ''))) {
+      const x = new Error('امتلأت مساحة التخزين المتاحة للتطبيق على هذا الجهاز.'); x.fatal = true; throw x;
+    }
+    throw e;
+  }
+}
+async function subtree(id){
+  const out = [], q = [id];
+  while (q.length) {
+    for (const c of await children(q.shift())) { out.push(c); if (c.type === 'folder') q.push(c.id); }
+  }
+  return out;
+}
+async function deleteTree(id){
+  const ids = [id, ...(await subtree(id)).map(i => i.id)];
+  const t = db.transaction(['items','blobs'], 'readwrite');
+  for (const i of ids) { t.objectStore('items').delete(i); t.objectStore('blobs').delete(i); }
+  await done(t);
+}
+async function requestPersist(){
+  try { if (navigator.storage && navigator.storage.persist && !(await navigator.storage.persisted())) return await navigator.storage.persist(); } catch {}
+  return false;
+}
+
+/* ---------- النوافذ والرسائل ---------- */
+let sheetResolve = null, sheetLocked = false;
+function openSheet(html, locked = false){
+  sheetLocked = locked;
+  $('#sheet').innerHTML = html;
+  $('#overlay').classList.add('show');
+  $('#sheet').querySelectorAll('[data-x]').forEach(b => b.onclick = () => closeSheet(null));
+}
+function closeSheet(val = null){
+  $('#overlay').classList.remove('show');
+  sheetLocked = false;
+  const r = sheetResolve; sheetResolve = null; r && r(val);
+}
+$('#overlay').addEventListener('click', e => { if (e.target.id === 'overlay' && !sheetLocked) closeSheet(null); });
+
+function askText(title, desc, value = '', ok = 'حفظ', ph = '', ltr = false){
+  return new Promise(res => {
+    openSheet(`<h3>${esc(title)}</h3>${desc ? `<p>${esc(desc)}</p>` : ''}
+      <input class="field ${ltr ? '' : 'rtl'}" id="askIn" value="${esc(value)}" placeholder="${esc(ph)}" autocomplete="off" autocapitalize="off">
+      <div class="actions"><button class="btn primary" id="askOk">${esc(ok)}</button><button class="btn" data-x>إلغاء</button></div>`);
+    sheetResolve = res;
+    const inp = $('#askIn');
+    const go = () => { const v = inp.value.trim(); if (v) closeSheet(v); };
+    $('#askOk').onclick = go;
+    inp.onkeydown = e => { if (e.key === 'Enter') go(); };
+    setTimeout(() => inp.focus(), 60);
+  });
+}
+function confirmBox(title, msg, ok = 'موافق', danger = false){
+  return new Promise(res => {
+    openSheet(`<h3>${esc(title)}</h3><p>${esc(msg)}</p>
+      <div class="actions"><button class="btn ${danger ? 'danger' : 'primary'}" id="cOk">${esc(ok)}</button><button class="btn" data-x>إلغاء</button></div>`);
+    sheetResolve = res;
+    $('#cOk').onclick = () => closeSheet(true);
+  });
+}
+function alertBox(title, msg){
+  return new Promise(res => {
+    openSheet(`<h3>${esc(title)}</h3><p>${esc(msg)}</p><div class="actions"><button class="btn primary" data-x>حسنًا</button></div>`);
+    sheetResolve = res;
+  });
+}
+function menu(title, opts){
+  openSheet(`<h3 style="word-break:break-word">${esc(title)}</h3><div class="menu">${opts.map((o, i) =>
+    `<button data-i="${i}" ${o.danger ? 'style="color:var(--danger)"' : ''}>${ic(o.icon)}<span>${esc(o.label)}</span></button>`).join('')}</div>
+    <div class="actions"><button class="btn" data-x>إلغاء</button></div>`);
+  $('#sheet').querySelectorAll('[data-i]').forEach(b => b.onclick = () => { closeSheet(); opts[+b.dataset.i].run(); });
+}
+let toastT;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3800);
+}
+function progressUI(title){
+  openSheet(`<h3>${esc(title)}</h3><p id="pText">جارٍ التحضير…</p>
+    <div class="progress"><div id="pBar"></div></div><p id="pSub"></p>
+    <div class="actions"><button class="btn danger" id="pCancel">إيقاف</button></div>`, true);
+  let cancelled = false;
+  $('#pCancel').onclick = () => { cancelled = true; $('#pCancel').disabled = true; $('#pText').textContent = 'جارٍ الإيقاف بعد الملف الحالي…'; };
+  return {
+    set(text, frac, sub){
+      if (!cancelled && text) $('#pText').textContent = text;
+      if (frac != null) $('#pBar').style.width = Math.round(Math.min(1, frac) * 100) + '%';
+      if (sub != null) $('#pSub').textContent = sub;
+    },
+    get cancelled(){ return cancelled; },
+    close(){ sheetLocked = false; closeSheet(); }
+  };
+}
+
+/* ---------- Google Drive ---------- */
+let token = null, tokenExp = 0;
+const getCid = () => store.get(LS.cid).trim();
+function loadGIS(){
+  return new Promise((res, rej) => {
+    if (window.google && google.accounts && google.accounts.oauth2) return res();
+    const old = document.getElementById('gis'); if (old) old.remove();
+    const s = document.createElement('script');
+    s.id = 'gis'; s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = () => res();
+    s.onerror = () => rej(new Error('تعذّر تحميل خدمة تسجيل الدخول من Google. يُرجى التحقق من الاتصال بالإنترنت.'));
+    document.head.appendChild(s);
+  });
+}
+async function getToken(){
+  if (token && Date.now() < tokenExp - 60000) return token;
+  const cid = getCid();
+  if (!cid) throw new Error('يلزم إدخال معرّف العميل (Client ID) من صفحة الإعدادات أولًا.');
+  await loadGIS();
+  return new Promise((res, rej) => {
+    const tc = google.accounts.oauth2.initTokenClient({
+      client_id: cid,
+      scope: 'https://www.googleapis.com/auth/drive.readonly',
+      callback: r => {
+        if (r.error) return rej(new Error('لم يكتمل تسجيل الدخول إلى Google (' + r.error + ').'));
+        token = r.access_token; tokenExp = Date.now() + (r.expires_in || 3600) * 1000; res(token);
+      },
+      error_callback: e => rej(new Error(e && e.type === 'popup_closed' ? 'أُغلقت نافذة تسجيل الدخول قبل اكتماله.' : 'تعذّر فتح نافذة تسجيل الدخول إلى Google. يُرجى السماح بالنوافذ المنبثقة ثم إعادة المحاولة.'))
+    });
+    tc.requestAccessToken();
+  });
+}
+async function driveFetch(url){
+  const tok = await getToken();
+  let r;
+  try { r = await fetch(url, {headers:{Authorization:'Bearer ' + tok}}); }
+  catch { const x = new Error('انقطع الاتصال بالإنترنت أثناء التنزيل. يمكن استكمال الحفظ لاحقًا عبر خيار «مزامنة».'); x.fatal = true; throw x; }
+  if (r.status === 401) { token = null; const x = new Error('انتهت صلاحية جلسة Google. يُرجى إعادة المحاولة عبر خيار «مزامنة» لاستكمال الحفظ.'); x.fatal = true; throw x; }
+  if (!r.ok) {
+    let m = ''; try { m = (await r.json()).error.message; } catch {}
+    const x = new Error('تعذّر الوصول إلى الملف في Google Drive (رمز الخطأ ' + r.status + ')' + (m ? ': ' + m : '.'));
+    x.fatal = (r.status === 404 && url.includes('fields=id,name,mimeType')) || r.status === 403 && /rate|quota/i.test(m);
+    throw x;
+  }
+  return r;
+}
+async function listChildren(fid){
+  const out = []; let pt = '';
+  do {
+    const q = encodeURIComponent(`'${fid}' in parents and trashed=false`);
+    const u = `${API}?q=${q}&fields=nextPageToken,files(id,name,mimeType,size,modifiedTime)&pageSize=1000&supportsAllDrives=true&includeItemsFromAllDrives=true` + (pt ? '&pageToken=' + encodeURIComponent(pt) : '');
+    const j = await (await driveFetch(u)).json();
+    out.push(...(j.files || [])); pt = j.nextPageToken;
+  } while (pt);
+  return out;
+}
+function parseFolderId(s){
+  s = s.trim();
+  const m = s.match(/folders\/([\w-]{10,})/) || s.match(/[?&]id=([\w-]{10,})/);
+  if (m) return m[1];
+  return /^[\w-]{10,}$/.test(s) ? s : null;
+}
+const withPdf = n => /\.pdf$/i.test(n) ? n : n + '.pdf';
+
+async function syncFolder(root, p){
+  // 1) قراءة شجرة المجلد كاملة من Google Drive
+  const remote = [], queue = [root.driveId]; let folders = 0;
+  while (queue.length) {
+    if (p.cancelled) return {cancelled:true};
+    const f = queue.shift();
+    p.set('جارٍ قراءة محتوى المجلدات… (المجلدات المقروءة: ' + (++folders) + ')', null, '');
+    for (const k of await listChildren(f)) { k.parentDriveId = f; remote.push(k); if (k.mimeType === FOLDER_MIME) queue.push(k.id); }
+  }
+  // 2) مطابقة المحتوى المحلي
+  const local = await subtree(root.id);
+  const byDrive = new Map((await allItems()).filter(i => i.driveId && i.id !== root.id).map(i => [i.driveId, i]));
+  const idFor = new Map([[root.driveId, root.id]]);
+  for (const r of remote) {
+    if (r.mimeType !== FOLDER_MIME) continue;
+    const ex = byDrive.get(r.id), id = ex ? ex.id : uid();
+    idFor.set(r.id, id);
+    await putItem({...(ex || {}), id, parentId: ex && ex.moved ? ex.parentId : idFor.get(r.parentDriveId), name: r.name, type: 'folder', driveId: r.id, added: (ex && ex.added) || Date.now()});
+  }
+  let skipped = 0;
+  const files = remote.filter(r => {
+    if (r.mimeType === FOLDER_MIME) return false;
+    if (r.mimeType.startsWith('application/vnd.google-apps.') && !EXPORTABLE.has(r.mimeType)) { skipped++; return false; }
+    return true;
+  });
+  // 3) تنزيل الملفات الجديدة أو المعدّلة فقط
+  let i = 0, saved = 0, failed = 0, bytes = 0;
+  for (const r of files) {
+    if (p.cancelled) break;
+    i++;
+    const exp = EXPORTABLE.has(r.mimeType);
+    const name = exp ? withPdf(r.name) : r.name;
+    const ex = byDrive.get(r.id);
+    const pid = ex && ex.moved ? ex.parentId : idFor.get(r.parentDriveId);
+    p.set('جارٍ حفظ الملفات: ' + i + ' من ' + files.length, (i - 1) / files.length, name);
+    try {
+      if (ex && ex.modifiedTime === r.modifiedTime) {
+        if (ex.parentId !== pid || ex.name !== name) await putItem({...ex, parentId: pid, name});
+        continue;
+      }
+      const url = exp ? `${API}/${r.id}/export?mimeType=application%2Fpdf` : `${API}/${r.id}?alt=media&supportsAllDrives=true`;
+      const b = await (await driveFetch(url)).blob();
+      const mime = exp ? 'application/pdf' : (r.mimeType && r.mimeType !== 'application/octet-stream' ? r.mimeType : guessMime(name));
+      const blob = b.type === mime ? b : new Blob([b], {type: mime});
+      await putItem({...(ex || {}), id: ex ? ex.id : uid(), parentId: pid, name, type: 'file', mime, size: blob.size, driveId: r.id, modifiedTime: r.modifiedTime, added: (ex && ex.added) || Date.now()}, blob);
+      saved++; bytes += blob.size;
+    } catch (e) {
+      if (e.fatal) throw e;
+      failed++;
+    }
+  }
+  if (p.cancelled) return {cancelled:true, saved, bytes};
+  p.set('جارٍ إنهاء المزامنة…', 1, '');
+  // 4) حذف ما أُزيل من Google Drive
+  const keep = new Set(remote.map(r => r.id));
+  for (const it of local) if (it.driveId && !keep.has(it.driveId)) { try { await deleteTree(it.id); } catch {} }
+  const fresh = await getItem(root.id);
+  await putItem({...fresh, lastSync: Date.now()});
+  return {saved, failed, skipped, bytes, total: files.length};
+}
+
+function syncSummary(r){
+  if (r.cancelled) return 'أُوقف الحفظ. الملفات المحفوظة حتى الآن: ' + (r.saved || 0) + '. يمكن استكماله عبر خيار «مزامنة».';
+  let s = 'اكتمل الحفظ. ملفات جديدة أو محدّثة: ' + r.saved + ' (' + fmtSize(r.bytes) + ')';
+  if (r.failed) s += '، وتعذّر حفظ: ' + r.failed;
+  if (r.skipped) s += '، وتُجووز عن عناصر غير مدعومة: ' + r.skipped;
+  return s + '.';
+}
+
+async function ensureDriveReady(){
+  if (!navigator.onLine) { toast('يلزم الاتصال بالإنترنت للاستيراد من Google Drive.'); return false; }
+  if (!getCid()) {
+    const ok = await confirmBox('إعداد الربط مع Google Drive',
+      'لاستيراد المجلدات مباشرةً من Google Drive يلزم إدخال معرّف العميل (Client ID) مرة واحدة من صفحة الإعدادات. ويمكن بدلًا من ذلك إضافة الملفات من تطبيق «الملفات» دون أي إعداد.',
+      'فتح الإعدادات');
+    if (ok) openSettings();
+    return false;
+  }
+  return true;
+}
+
+async function driveImport(){
+  view = 'folder';
+  if (!(await ensureDriveReady())) return;
+  const link = await askText('استيراد مجلد من Google Drive',
+    'يُلصق رابط المجلد أو معرّفه، وسيُحفظ المجلد بجميع ملفاته ومجلداته الفرعية على هذا الجهاز ليكون متاحًا دون اتصال.',
+    '', 'بدء الاستيراد', 'https://drive.google.com/drive/folders/…', true);
+  if (!link) return;
+  const fid = parseFolderId(link);
+  if (!fid) return alertBox('رابط غير صالح', 'تعذّر التعرّف على رابط المجلد. يُرجى التأكد من نسخ رابط مجلد من Google Drive.');
+  const p = progressUI('استيراد من Google Drive');
+  try {
+    await getToken();
+    p.set('جارٍ قراءة بيانات المجلد…', 0, '');
+    const meta = await (await driveFetch(`${API}/${fid}?fields=id,name,mimeType&supportsAllDrives=true`)).json();
+    if (meta.mimeType !== FOLDER_MIME) throw new Error('الرابط المُدخَل لا يشير إلى مجلد.');
+    let root = (await getByDrive(fid))[0];
+    if (!root) {
+      root = {id: uid(), parentId: current, name: meta.name, type: 'folder', driveId: fid, source: 'drive', added: Date.now()};
+      await putItem(root);
+    }
+    const r = await syncFolder(root, p);
+    p.close();
+    requestPersist();
+    toast(syncSummary(r));
+  } catch (e) {
+    p.close();
+    alertBox('تعذّر إكمال الاستيراد', e.message || String(e));
+  }
+  render();
+}
+
+async function syncItem(it){
+  if (!(await ensureDriveReady())) return;
+  const p = progressUI('مزامنة «' + it.name + '»');
+  try {
+    await getToken();
+    const r = await syncFolder(it, p);
+    p.close(); toast(syncSummary(r));
+  } catch (e) { p.close(); alertBox('تعذّرت المزامنة', e.message || String(e)); }
+  render();
+}
+
+/* ---------- الإضافة من تطبيق الملفات ---------- */
+async function importLocal(fileList){
+  const files = [...fileList]; if (!files.length) return;
+  view = 'folder';
+  const p = progressUI('حفظ الملفات على الجهاز');
+  const folderMap = new Map();
+  let i = 0, bytes = 0;
+  try {
+    for (const f of files) {
+      if (p.cancelled) break;
+      i++;
+      p.set('جارٍ حفظ الملفات: ' + i + ' من ' + files.length, (i - 1) / files.length, f.name);
+      const parts = (f.webkitRelativePath || '').split('/').slice(0, -1);
+      let pid = current, key = '';
+      for (const part of parts) {
+        key += '/' + part;
+        if (!folderMap.has(key)) {
+          const ex = (await children(pid)).find(c => c.type === 'folder' && c.name === part);
+          const id = ex ? ex.id : uid();
+          if (!ex) await putItem({id, parentId: pid, name: part, type: 'folder', added: Date.now()});
+          folderMap.set(key, id);
+        }
+        pid = folderMap.get(key);
+      }
+      const mime = f.type || guessMime(f.name);
+      const blob = new Blob([await f.arrayBuffer()], {type: mime});
+      await putItem({id: uid(), parentId: pid, name: f.name, type: 'file', mime, size: blob.size, added: Date.now()}, blob);
+      bytes += blob.size;
+    }
+    p.close();
+    requestPersist();
+    toast('حُفظت الملفات على الجهاز. العدد: ' + i + ' (' + fmtSize(bytes) + ').');
+  } catch (e) { p.close(); alertBox('تعذّر حفظ الملفات', e.message || String(e)); }
+  render();
+}
+$('#fileInput').onchange = e => { importLocal(e.target.files); e.target.value = ''; };
+$('#dirInput').onchange = e => { importLocal(e.target.files); e.target.value = ''; };
+
+/* ---------- فك ضغط ملفات ZIP (دون مكتبات خارجية) ---------- */
+const isZip = it => it.type === 'file' && (kind(it.mime) === 'zip' || /\.zip$/i.test(it.name));
+function decodeName(b, flag){
+  if (flag & 0x800) return new TextDecoder('utf-8').decode(b);
+  try { return new TextDecoder('utf-8', {fatal:true}).decode(b); } catch {}
+  try { return new TextDecoder('windows-1256').decode(b); } catch {}
+  return Array.from(b, c => String.fromCharCode(c)).join('');
+}
+async function readZip(blob){
+  const tailSize = Math.min(blob.size, 65557);
+  const tail = new DataView(await blob.slice(blob.size - tailSize).arrayBuffer());
+  let eocd = -1;
+  for (let i = tailSize - 22; i >= 0; i--) if (tail.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  if (eocd < 0) throw new Error('الملف ليس ملف ZIP صالحًا، أو أنه تالف.');
+  let count = tail.getUint16(eocd + 10, true), cdSize = tail.getUint32(eocd + 12, true), cdOff = tail.getUint32(eocd + 16, true);
+  if (cdOff === 0xFFFFFFFF || count === 0xFFFF) {
+    const loc = eocd - 20;
+    if (loc >= 0 && tail.getUint32(loc, true) === 0x07064b50) {
+      const z64 = Number(tail.getBigUint64(loc + 8, true));
+      const z = new DataView(await blob.slice(z64, z64 + 56).arrayBuffer());
+      count = Number(z.getBigUint64(32, true)); cdSize = Number(z.getBigUint64(40, true)); cdOff = Number(z.getBigUint64(48, true));
+    }
+  }
+  const buf = await blob.slice(cdOff, cdOff + cdSize).arrayBuffer();
+  const cd = new DataView(buf), bytes = new Uint8Array(buf), out = [];
+  let p = 0;
+  for (let i = 0; i < count && p + 46 <= cd.byteLength; i++) {
+    if (cd.getUint32(p, true) !== 0x02014b50) break;
+    const flag = cd.getUint16(p + 8, true), method = cd.getUint16(p + 10, true);
+    let csize = cd.getUint32(p + 20, true), usize = cd.getUint32(p + 24, true), lho = cd.getUint32(p + 42, true);
+    const nlen = cd.getUint16(p + 28, true), elen = cd.getUint16(p + 30, true), clen = cd.getUint16(p + 32, true);
+    let name = decodeName(bytes.subarray(p + 46, p + 46 + nlen), flag);
+    let e = p + 46 + nlen; const eEnd = e + elen;
+    while (e + 4 <= eEnd) {
+      const id = cd.getUint16(e, true), sz = cd.getUint16(e + 2, true);
+      if (id === 0x0001) {
+        let q = e + 4;
+        if (usize === 0xFFFFFFFF) { usize = Number(cd.getBigUint64(q, true)); q += 8; }
+        if (csize === 0xFFFFFFFF) { csize = Number(cd.getBigUint64(q, true)); q += 8; }
+        if (lho === 0xFFFFFFFF) lho = Number(cd.getBigUint64(q, true));
+      } else if (id === 0x7075 && sz > 5) {
+        try { name = new TextDecoder('utf-8', {fatal:true}).decode(bytes.subarray(e + 9, e + 4 + sz)); } catch {}
+      }
+      e += 4 + sz;
+    }
+    out.push({name, method, csize, usize, lho, encrypted: !!(flag & 1)});
+    p += 46 + nlen + elen + clen;
+  }
+  return out;
+}
+async function zipEntryBlob(blob, en, mime){
+  const h = new DataView(await blob.slice(en.lho, en.lho + 30).arrayBuffer());
+  if (h.getUint32(0, true) !== 0x04034b50) throw new Error('bad header');
+  const start = en.lho + 30 + h.getUint16(26, true) + h.getUint16(28, true);
+  const raw = blob.slice(start, start + en.csize);
+  if (en.method === 0) return new Blob([raw], {type: mime});
+  if (en.method === 8) {
+    const b = await new Response(raw.stream().pipeThrough(new DecompressionStream('deflate-raw'))).blob();
+    return new Blob([b], {type: mime});
+  }
+  throw new Error('unsupported');
+}
+const cleanPath = n => n.replace(/\\/g, '/').split('/').filter(s => s && s !== '.' && s !== '..').join('/');
+
+async function extractZip(it){
+  if (typeof DecompressionStream === 'undefined')
+    return alertBox('فك الضغط غير مدعوم', 'يتطلب فك الضغط إصدار iPadOS 16.4 أو أحدث. يُرجى تحديث نظام الجهاز ثم إعادة المحاولة.');
+  const zb = await getBlob(it.id);
+  if (!zb) return toast('تعذّر العثور على محتوى الملف.');
+  let entries;
+  try { entries = await readZip(zb); } catch (e) { return alertBox('تعذّر فك الضغط', e.message || String(e)); }
+  entries = entries.map(e => ({...e, dir: /[\/\\]$/.test(e.name), path: cleanPath(e.name)}))
+    .filter(e => e.path && !/(^|\/)__MACOSX(\/|$)/.test(e.path) && !/(^|\/)\.DS_Store$/.test(e.path));
+  const files = entries.filter(e => !e.dir);
+  if (!files.length) return alertBox('الملف المضغوط فارغ', 'لا يحتوي هذا الملف المضغوط على أي ملفات.');
+
+  // إذا كانت جميع المحتويات داخل مجلد واحد، يُستغنى عنه لتجنّب تكرار المجلدات
+  const tops = new Set(entries.map(e => e.path.split('/')[0]));
+  const strip = tops.size === 1 && files.every(e => e.path.includes('/'));
+  const rel = e => !strip ? e.path : (e.path.includes('/') ? e.path.slice(e.path.indexOf('/') + 1) : '');
+
+  const base = it.name.replace(/\.zip$/i, '').trim() || 'ملفات مستخرجة';
+  const siblings = await children(it.parentId);
+  let name = base, n = 2;
+  while (siblings.some(s => s.type === 'folder' && s.name === name)) name = base + ' (' + (n++) + ')';
+
+  const p = progressUI('فك ضغط «' + it.name + '»');
+  const rootId = uid();
+  const map = new Map([['', rootId]]);
+  async function folderFor(path){
+    if (map.has(path)) return map.get(path);
+    const i = path.lastIndexOf('/');
+    const parent = await folderFor(i < 0 ? '' : path.slice(0, i));
+    const id = uid();
+    await putItem({id, parentId: parent, name: path.slice(i + 1), type: 'folder', added: Date.now()});
+    map.set(path, id); return id;
+  }
+  let saved = 0, failed = 0, locked = 0, bytes = 0, i = 0;
+  try {
+    await putItem({id: rootId, parentId: it.parentId, name, type: 'folder', added: Date.now()});
+    for (const e of entries) if (e.dir && rel(e)) await folderFor(rel(e));
+    for (const e of files) {
+      if (p.cancelled) break;
+      i++;
+      const r = rel(e), k = r.lastIndexOf('/'), fname = r.slice(k + 1);
+      p.set('جارٍ فك الضغط: ' + i + ' من ' + files.length, (i - 1) / files.length, fname);
+      if (e.encrypted) { locked++; continue; }
+      try {
+        const pid = await folderFor(k < 0 ? '' : r.slice(0, k));
+        const mime = guessMime(fname);
+        const b = await zipEntryBlob(zb, e, mime);
+        await putItem({id: uid(), parentId: pid, name: fname, type: 'file', mime, size: b.size, added: Date.now()}, b);
+        saved++; bytes += b.size;
+      } catch (err) { if (err.fatal) throw err; failed++; }
+    }
+  } catch (err) {
+    p.close(); await alertBox('توقّف فك الضغط', err.message || String(err)); return go(rootId);
+  }
+  p.close();
+  let msg = (p.cancelled ? 'أُوقف فك الضغط. ' : 'اكتمل فك الضغط. ') + 'الملفات المستخرجة: ' + saved + ' (' + fmtSize(bytes) + ')';
+  if (locked) msg += '، وملفات محمية بكلمة مرور لم تُستخرج: ' + locked;
+  if (failed) msg += '، وتعذّر استخراج: ' + failed;
+  toast(msg + '.');
+  go(rootId);
+}
+
+/* ---------- العرض والتنظيم ---------- */
+let current = 'root', searchQ = '', thumbURLs = [];
+let view = 'folder', viewTag = null, tags = [], shown = [];
+let selectMode = false; const selected = new Set();
+let sortBy = store.get('dk.sort') || 'name';
+const TAG_COLORS = ['#0f766e','#2563eb','#7c3aed','#db2777','#dc2626','#ea580c','#ca8a04','#16a34a','#475569'];
+const tagById = id => tags.find(t => t.id === id);
+const nameCmp = (a, b) => a.name.localeCompare(b.name, 'ar', {numeric:true});
+
+function go(id){ current = id; view = 'folder'; searchQ = ''; $('#q').value = ''; selectMode = false; selected.clear(); render(); scrollTo(0, 0); }
+function setView(v, tagId){ view = v; viewTag = tagId || null; searchQ = ''; $('#q').value = ''; selectMode = false; selected.clear(); render(); scrollTo(0, 0); }
+
+function renderChips(){
+  const active = searchQ ? '' : view === 'tag' ? 'tag:' + viewTag : view;
+  const chip = (k, label, icon, color) => `<button class="chip ${active === k ? 'active' : ''}" data-k="${esc(k)}">${color ? `<i style="background:${color}"></i>` : ic(icon, 16)}${esc(label)}</button>`;
+  $('#chips').innerHTML = chip('folder', 'مكتبتي', 'folder') + chip('fav', 'المفضّلة', 'star') + chip('recent', 'آخر ما فُتح', 'clock')
+    + tags.map(t => chip('tag:' + t.id, t.name, null, t.color)).join('')
+    + `<button class="chip ghost" id="manageTagsChip">${ic(tags.length ? 'tag' : 'plus', 16)}${tags.length ? 'إدارة الوسوم' : 'إنشاء وسم'}</button>`;
+  $('#chips').querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    if (k === 'folder') go(view === 'folder' ? 'root' : current);
+    else if (k.startsWith('tag:')) setView('tag', k.slice(4));
+    else setView(k);
+  });
+  $('#manageTagsChip').onclick = manageTags;
+}
+
+async function renderCrumbs(){
+  const path = await pathOf(current);
+  if (current !== 'root' && !path.length) current = 'root';
+  const parts = [{id:'root', name:'مكتبتي'}, ...path];
+  $('#crumbs').innerHTML = parts.map((p, i) => (i ? '<span class="sep">›</span>' : '') + `<button data-id="${esc(p.id)}">${esc(p.name)}</button>`).join('');
+  $('#crumbs').querySelectorAll('button').forEach(b => b.onclick = () => go(b.dataset.id));
+}
+function crumbsText(t){
+  $('#crumbs').innerHTML = `<button data-id="root">مكتبتي</button><span class="sep">›</span><button>${esc(t)}</button>`;
+  $('#crumbs').querySelector('button').onclick = () => go('root');
+}
+function sortItems(items){
+  const f = {
+    name: nameCmp,
+    new: (a, b) => (b.added || 0) - (a.added || 0),
+    size: (a, b) => (b.size || 0) - (a.size || 0),
+    type: (a, b) => kind(a.mime).localeCompare(kind(b.mime)) || nameCmp(a, b)
+  }[sortBy] || nameCmp;
+  items.sort((a, b) => (a.type === b.type ? 0 : a.type === 'folder' ? -1 : 1) || f(a, b));
+}
+
+async function render(){
+  thumbURLs.forEach(u => URL.revokeObjectURL(u)); thumbURLs = [];
+  renderChips();
+  const all = await allItems();
+  const counts = new Map();
+  for (const i of all) counts.set(i.parentId, (counts.get(i.parentId) || 0) + 1);
+  let items, emptyHTML = '';
+  if (searchQ) {
+    const q = norm(searchQ);
+    items = all.filter(i => norm(i.name).includes(q) || (i.tags || []).some(t => tagById(t) && norm(tagById(t).name).includes(q)));
+    crumbsText('نتائج البحث عن «' + searchQ + '»: ' + items.length);
+    emptyHTML = `<div class="empty">${ic('search', 48)}<h2>لا توجد نتائج</h2><p>لم يُعثر على ملفات أو مجلدات أو وسوم تطابق عبارة البحث.</p></div>`;
+  } else if (view === 'fav') {
+    items = all.filter(i => i.fav); crumbsText('المفضّلة');
+    emptyHTML = `<div class="empty"><div style="color:#f59e0b">${ic('star', 56)}</div><h2>لا توجد عناصر في المفضّلة</h2><p>يمكن إضافة أي ملف أو مجلد إلى المفضّلة من قائمة الخيارات (⋯) للوصول إليه بسرعة.</p></div>`;
+  } else if (view === 'recent') {
+    items = all.filter(i => i.type === 'file' && i.opened).sort((a, b) => b.opened - a.opened).slice(0, 60); crumbsText('آخر ما فُتح');
+    emptyHTML = `<div class="empty">${ic('clock', 56)}<h2>لم يُفتح أي ملف بعد</h2><p>ستظهر هنا الملفات التي تُفتح، مرتبةً من الأحدث.</p></div>`;
+  } else if (view === 'tag') {
+    const t = tagById(viewTag);
+    if (!t) { view = 'folder'; return render(); }
+    items = all.filter(i => (i.tags || []).includes(viewTag)); crumbsText('الوسم: ' + t.name);
+    emptyHTML = `<div class="empty"><div style="color:${t.color}">${ic('tag', 56)}</div><h2>لا توجد عناصر بهذا الوسم</h2><p>يمكن إضافة الوسم من قائمة الخيارات (⋯)، أو بتحديد عدة عناصر معًا.</p></div>`;
+  } else {
+    await renderCrumbs();
+    items = all.filter(i => i.parentId === current);
+    if (current === 'root') {
+      emptyHTML = `<div class="empty"><div style="color:var(--accent)">${ic('folder', 64)}</div><h2>لا توجد ملفات محفوظة بعد</h2>
+        <p>يُمكن استيراد مجلد كامل من Google Drive أو إضافة ملفات من تطبيق «الملفات»، لتبقى متاحة على الآيباد حتى دون اتصال بالإنترنت.</p>
+        <div class="actions"><button class="btn primary" id="eDrive">${ic('cloud')}استيراد من Google Drive</button><button class="btn" id="eFiles">${ic('files')}إضافة من تطبيق الملفات</button></div></div>`;
+    } else emptyHTML = `<div class="empty">${ic('folder', 48)}<h2>هذا المجلد فارغ</h2><p>يمكن نقل ملفات إليه من قائمة الخيارات (⋯) أو بتحديد عدة عناصر.</p></div>`;
+  }
+  if (searchQ || view !== 'recent') sortItems(items);
+  $('#sort').style.display = view === 'recent' && !searchQ ? 'none' : '';
+  shown = items.map(i => i.id);
+  for (const id of [...selected]) if (!shown.includes(id)) selected.delete(id);
+
+  const grid = $('#grid'); grid.innerHTML = '';
+  for (const it of items) grid.appendChild(card(it, counts));
+  $('#empty').innerHTML = items.length ? '' : emptyHTML;
+  const eD = $('#eDrive'); if (eD) { eD.onclick = driveImport; $('#eFiles').onclick = filesMenu; }
+
+  const fs = all.filter(i => i.type === 'file');
+  $('#stats').textContent = fs.length ? 'الملفات المحفوظة: ' + fs.length + ' — الحجم الكلي: ' + fmtSize(fs.reduce((s, f) => s + (f.size || 0), 0)) : '';
+  updateSelBar();
+}
+
+function card(it, counts){
+  const d = document.createElement('div');
+  d.className = 'card' + (selectMode && selected.has(it.id) ? ' sel' : '');
+  let thumb, meta;
+  if (it.type === 'folder') {
+    thumb = `<div class="thumb" style="color:var(--accent)">${ic('folder', 46)}</div>`;
+    meta = `<span>${countLabel(counts.get(it.id) || 0)}</span>` + (it.driveId ? '<span class="badge">Drive</span>' : '');
+    if (it.lastSync) meta += `<span style="width:100%">آخر مزامنة: ${esc(fmtDate(it.lastSync))}</span>`;
+  } else {
+    const k = kind(it.mime), [lbl, color] = KIND[k];
+    thumb = `<div class="thumb" style="color:${color}">${ic('file', 42)}<span class="lbl" style="background:${color}">${lbl}</span></div>`;
+    meta = `<span>${fmtSize(it.size)}</span>`;
+  }
+  const tg = (it.tags || []).map(tagById).filter(Boolean);
+  const tagsHTML = tg.length ? `<div class="tags">${tg.slice(0, 3).map(t => `<span class="tagpill" style="--c:${t.color}">${esc(t.name)}</span>`).join('')}${tg.length > 3 ? `<span class="tagpill" style="--c:var(--muted)">+${tg.length - 3}</span>` : ''}</div>` : '';
+  const corner = selectMode ? `<span class="check">${ic('check', 18)}</span>` : `<button class="more" aria-label="خيارات">${ic('more', 20)}</button>`;
+  d.innerHTML = `${corner}${it.fav ? `<span class="star">${ic('starfill', 20)}</span>` : ''}${thumb}<div class="name">${esc(it.name)}</div>${tagsHTML}<div class="meta">${meta}</div>`;
+  d.onclick = () => {
+    if (selectMode) {
+      selected.has(it.id) ? selected.delete(it.id) : selected.add(it.id);
+      d.classList.toggle('sel', selected.has(it.id)); updateSelBar(); return;
+    }
+    it.type === 'folder' ? go(it.id) : openViewer(it);
+  };
+  const mb = d.querySelector('.more');
+  if (mb) mb.onclick = e => { e.stopPropagation(); itemMenu(it); };
+  if (it.type === 'file' && kind(it.mime) === 'image' && (it.size || 0) < 25e6) {
+    getBlob(it.id).then(b => {
+      if (!b) return;
+      const u = URL.createObjectURL(b); thumbURLs.push(u);
+      const img = new Image(); img.alt = ''; img.src = u;
+      img.onload = () => { const t = d.querySelector('.thumb'); t.innerHTML = ''; t.appendChild(img); };
+    }).catch(() => {});
+  }
+  return d;
+}
+
+/* ---------- التحديد المتعدد ---------- */
+const selItems = async () => (await Promise.all([...selected].map(getItem))).filter(Boolean);
+function updateSelBar(){
+  $('#selBtn').innerHTML = selectMode ? ic('x', 18) + '<span>إنهاء التحديد</span>' : ic('select', 18) + '<span>تحديد</span>';
+  const b = $('#selbar');
+  document.body.classList.toggle('selecting', selectMode);
+  if (!selectMode) { b.classList.remove('show'); return; }
+  const n = selected.size, dis = n ? '' : 'disabled';
+  b.innerHTML = `<span class="count">المحدَّد: ${n}</span>
+    <button class="btn small" id="sAll">${shown.length && shown.every(id => selected.has(id)) ? 'إلغاء تحديد الكل' : 'تحديد الكل'}</button>
+    <button class="btn small" id="sMove" ${dis}>${ic('move', 18)}نقل</button>
+    <button class="btn small" id="sTag" ${dis}>${ic('tag', 18)}الوسوم</button>
+    <button class="btn small" id="sFav" ${dis}>${ic('star', 18)}المفضّلة</button>
+    <button class="btn small danger" id="sDel" ${dis}>${ic('trash', 18)}حذف</button>`;
+  b.classList.add('show');
+  $('#sAll').onclick = () => { const allOn = shown.every(id => selected.has(id)); selected.clear(); if (!allOn) shown.forEach(id => selected.add(id)); render(); };
+  $('#sMove').onclick = async () => moveItems(await selItems());
+  $('#sTag').onclick = async () => editTags(await selItems());
+  $('#sFav').onclick = async () => toggleFav(await selItems());
+  $('#sDel').onclick = async () => deleteItems(await selItems());
+}
+function endSelect(){ selectMode = false; selected.clear(); }
+
+/* ---------- المفضّلة والحذف ---------- */
+async function toggleFav(items){
+  const on = !items.every(i => i.fav);
+  for (const it of items) { const f = await getItem(it.id); if (f) await putItem({...f, fav: on}); }
+  toast(on ? 'أُضيف إلى المفضّلة.' : 'أُزيل من المفضّلة.');
+  endSelect(); render();
+}
+async function deleteItems(items){
+  const one = items.length === 1 ? items[0] : null;
+  const msg = one
+    ? (one.type === 'folder' ? 'سيُحذف المجلد «' + one.name + '» وجميع محتوياته من هذا الجهاز.' : 'سيُحذف الملف «' + one.name + '» من هذا الجهاز.')
+    : 'ستُحذف العناصر المحدَّدة (' + items.length + ') وجميع محتوياتها من هذا الجهاز.';
+  const ok = await confirmBox('تأكيد الحذف', msg + ' لا يؤثّر ذلك في النسخ الأصلية في Google Drive.', 'حذف', true);
+  if (!ok) return;
+  for (const it of items) { try { await deleteTree(it.id); } catch {} }
+  toast('تم الحذف.'); endSelect(); render();
+}
+
+/* ---------- النقل ---------- */
+function pickFolder(title, exclude){
+  return new Promise(res => {
+    let at = 'root';
+    const draw = async () => {
+      const path = await pathOf(at);
+      const kids = (await children(at)).filter(c => c.type === 'folder' && !exclude.has(c.id)).sort(nameCmp);
+      const here = path.length ? path[path.length - 1].name : 'مكتبتي';
+      openSheet(`<div class="pick"><h3>${esc(title)}</h3>
+        <div class="crumbs">${[{id:'root', name:'مكتبتي'}, ...path].map((p, i) => (i ? '<span class="sep">›</span>' : '') + `<button data-at="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>
+        <div class="menu">${kids.map(k => `<button data-at="${esc(k.id)}">${ic('folder')}<span style="flex:1">${esc(k.name)}</span><span style="color:var(--muted)">‹</span></button>`).join('') || '<p>لا توجد مجلدات فرعية هنا.</p>'}</div>
+        <div style="display:flex;gap:8px;align-items:center"><input class="field rtl" id="pkNew" placeholder="إنشاء مجلد جديد هنا" style="margin:8px 0"><button class="btn" id="pkAdd" aria-label="إنشاء">${ic('plus')}</button></div>
+        <div class="actions"><button class="btn primary" id="pkHere">${ic('move')}النقل إلى «${esc(here)}»</button><button class="btn" data-x>إلغاء</button></div></div>`);
+      sheetResolve = res;
+      $('#sheet').querySelectorAll('[data-at]').forEach(b => b.onclick = () => { at = b.dataset.at; draw(); });
+      $('#pkHere').onclick = () => closeSheet(at);
+      $('#pkAdd').onclick = async () => {
+        const n = $('#pkNew').value.trim(); if (!n) return;
+        const id = uid(); await putItem({id, parentId: at, name: n, type: 'folder', added: Date.now()});
+        at = id; draw();
+      };
+    };
+    draw();
+  });
+}
+async function moveItems(items){
+  if (!items.length) return;
+  const exclude = new Set(items.filter(i => i.type === 'folder').map(i => i.id));
+  const target = await pickFolder(items.length === 1 ? 'نقل «' + items[0].name + '»' : 'نقل العناصر المحدَّدة (' + items.length + ')', exclude);
+  if (target == null) { render(); return; }
+  if ((await pathOf(target)).some(p => exclude.has(p.id))) return alertBox('تعذّر النقل', 'لا يمكن نقل مجلد إلى داخل نفسه.');
+  for (const it of items) { const f = await getItem(it.id); if (f && f.parentId !== target) await putItem({...f, parentId: target, moved: true}); }
+  toast('تم النقل.');
+  endSelect(); render();
+}
+
+/* ---------- الوسوم ---------- */
+function editTags(items){
+  let ci = tags.length % TAG_COLORS.length;
+  const state = t => { const n = items.filter(i => (i.tags || []).includes(t.id)).length; return n === 0 ? '' : n === items.length ? 'on' : 'part'; };
+  const apply = async (tagId, on) => {
+    for (let k = 0; k < items.length; k++) {
+      const f = await getItem(items[k].id); if (!f) continue;
+      const set = new Set(f.tags || []); on ? set.add(tagId) : set.delete(tagId);
+      items[k] = {...f, tags: [...set]}; await putItem(items[k]);
+    }
+  };
+  const draw = () => {
+    openSheet(`<h3>الوسوم</h3><p>${items.length === 1 ? esc(items[0].name) : 'العناصر المحدَّدة: ' + items.length}</p>
+      <div class="tagpick">${tags.map(t => { const s = state(t); return `<button class="tagbtn ${s}" data-t="${esc(t.id)}" style="--c:${t.color}"><i></i>${esc(t.name)}${s === 'on' ? ic('check', 16) : ''}</button>`; }).join('') || '<p>لا توجد وسوم بعد. يمكن إنشاء أول وسم من الحقل أدناه.</p>'}</div>
+      <div class="section"><b>وسم جديد</b>
+        <input class="field rtl" id="ntName" placeholder="مثال: شواهد الأداء" autocomplete="off">
+        <div class="colors">${TAG_COLORS.map((c, i) => `<button class="color ${i === ci ? 'on' : ''}" data-c="${i}" style="background:${c}" aria-label="لون"></button>`).join('')}</div>
+        <button class="btn" id="ntAdd">${ic('plus')}إنشاء الوسم وإضافته</button></div>
+      <div class="actions"><button class="btn primary" data-x>تم</button></div>`);
+    sheetResolve = () => { endSelect(); render(); };
+    $('#sheet').querySelectorAll('[data-t]').forEach(b => b.onclick = async () => {
+      const t = tagById(b.dataset.t); await apply(t.id, state(t) !== 'on'); draw();
+    });
+    $('#sheet').querySelectorAll('[data-c]').forEach(b => b.onclick = () => {
+      ci = +b.dataset.c; $('#sheet').querySelectorAll('.color').forEach(x => x.classList.toggle('on', x === b));
+    });
+    $('#ntAdd').onclick = async () => {
+      const n = $('#ntName').value.trim(); if (!n) return;
+      let t = tags.find(x => x.name === n);
+      if (!t) { t = {id: uid(), name: n, color: TAG_COLORS[ci]}; tags.push(t); await saveTags(tags); }
+      await apply(t.id, true); ci = tags.length % TAG_COLORS.length; draw();
+    };
+  };
+  draw();
+}
+function manageTags(){
+  const draw = () => {
+    openSheet(`<h3>إدارة الوسوم</h3><p>الوسوم تصنيفات إضافية، ويمكن أن يحمل الملف الواحد أكثر من وسم. اللمس على الدائرة الملوّنة يغيّر لونها.</p>
+      <div>${tags.map(t => `<div class="tagrow"><button class="dot" data-color="${esc(t.id)}" style="background:${t.color}" aria-label="تغيير اللون"></button><span class="n">${esc(t.name)}</span>
+        <button class="btn small" data-ren="${esc(t.id)}">${ic('edit', 18)}</button><button class="btn small danger" data-del="${esc(t.id)}">${ic('trash', 18)}</button></div>`).join('') || '<p>لا توجد وسوم بعد.</p>'}</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><input class="field rtl" id="mtNew" placeholder="اسم وسم جديد" autocomplete="off"><button class="btn primary" id="mtAdd">${ic('plus')}إضافة</button></div>
+      <div class="actions"><button class="btn" data-x>إغلاق</button></div>`);
+    sheetResolve = () => render();
+    $('#mtAdd').onclick = async () => {
+      const n = $('#mtNew').value.trim(); if (!n || tags.some(t => t.name === n)) return;
+      tags.push({id: uid(), name: n, color: TAG_COLORS[tags.length % TAG_COLORS.length]}); await saveTags(tags); draw();
+    };
+    $('#sheet').querySelectorAll('[data-color]').forEach(b => b.onclick = async () => {
+      const t = tagById(b.dataset.color); t.color = TAG_COLORS[(TAG_COLORS.indexOf(t.color) + 1) % TAG_COLORS.length];
+      await saveTags(tags); draw();
+    });
+    $('#sheet').querySelectorAll('[data-ren]').forEach(b => b.onclick = async () => {
+      const t = tagById(b.dataset.ren); sheetResolve = null;
+      const n = await askText('إعادة تسمية الوسم', '', t.name, 'حفظ');
+      if (n) { t.name = n; await saveTags(tags); }
+      draw();
+    });
+    $('#sheet').querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+      const t = tagById(b.dataset.del); sheetResolve = null;
+      const ok = await confirmBox('حذف الوسم', 'سيُحذف الوسم «' + t.name + '» ويُزال عن جميع العناصر. لن تُحذف الملفات نفسها.', 'حذف الوسم', true);
+      if (ok) {
+        tags = tags.filter(x => x.id !== t.id); await saveTags(tags);
+        for (const it of await allItems()) if ((it.tags || []).includes(t.id)) await putItem({...it, tags: it.tags.filter(x => x !== t.id)});
+        if (view === 'tag' && viewTag === t.id) view = 'folder';
+      }
+      draw();
+    });
+  };
+  draw();
+}
+
+function itemMenu(it){
+  const opts = [];
+  if (it.type === 'folder') {
+    opts.push({icon:'folder', label:'فتح المجلد', run:() => go(it.id)});
+    if (it.driveId) opts.push({icon:'refresh', label:'مزامنة مع Google Drive', run:() => syncItem(it)});
+  } else {
+    if (isZip(it)) opts.push({icon:'unzip', label:'فك الضغط', run:() => extractZip(it)});
+    opts.push({icon:'open', label:'عرض الملف', run:() => openViewer(it)});
+    opts.push({icon:'share', label:'مشاركة أو فتح في تطبيق آخر', run:() => shareItem(it)});
+  }
+  opts.push({icon: it.fav ? 'starfill' : 'star', label: it.fav ? 'إزالة من المفضّلة' : 'إضافة إلى المفضّلة', run:() => toggleFav([it])});
+  opts.push({icon:'tag', label:'الوسوم', run:() => editTags([it])});
+  opts.push({icon:'move', label:'نقل إلى…', run:() => moveItems([it])});
+  if (searchQ || view !== 'folder') opts.push({icon:'locate', label:'الانتقال إلى موقعه', run:() => go(it.parentId)});
+  opts.push({icon:'edit', label:'إعادة التسمية', run: async () => {
+    const n = await askText('إعادة التسمية', '', it.name, 'حفظ');
+    if (n && n !== it.name) { const f = await getItem(it.id); await putItem({...f, name: n}); render(); }
+  }});
+  opts.push({icon:'trash', label:'حذف من الجهاز', danger:true, run:() => deleteItems([it])});
+  menu(it.name, opts);
+}
+
+function filesMenu(){
+  const opts = [{icon:'files', label:'اختيار ملفات', run:() => $('#fileInput').click()}];
+  if ('webkitdirectory' in document.createElement('input')) opts.push({icon:'folder', label:'اختيار مجلد كامل', run:() => $('#dirInput').click()});
+  menu('إضافة من تطبيق الملفات', opts);
+  $('#sheet').insertAdjacentHTML('beforeend', '<p style="margin-top:12px">يمكن الوصول إلى ملفات Google Drive من خلال تطبيق «الملفات» إذا كان تطبيق Google Drive مثبّتًا على الآيباد. ستُحفظ الملفات داخل المجلد المفتوح حاليًا.</p>');
+}
+
+/* ---------- عارض الملفات ---------- */
+let viewURL = null, viewItem = null, viewFile = null;
+async function openViewer(it){
+  const blob = await getBlob(it.id);
+  if (!blob) return toast('تعذّر العثور على محتوى الملف.');
+  getItem(it.id).then(f => f && putItem({...f, opened: Date.now()})).catch(() => {});
+  viewItem = it; viewFile = new File([blob], it.name, {type: it.mime || blob.type});
+  viewURL = URL.createObjectURL(viewFile);
+  $('#vTitle').textContent = it.name;
+  const k = kind(it.mime), b = $('#vbody');
+  if (k === 'image') b.innerHTML = `<img src="${viewURL}" alt="">`;
+  else if (k === 'video') b.innerHTML = `<video src="${viewURL}" controls playsinline></video>`;
+  else if (k === 'audio') b.innerHTML = `<audio src="${viewURL}" controls></audio>`;
+  else if (k === 'pdf') b.innerHTML = `<iframe src="${viewURL}" title="${esc(it.name)}"></iframe>`;
+  else if (isZip(it)) {
+    let list = [];
+    try { list = (await readZip(blob)).filter(e => !/[\/\\]$/.test(e.name) && !/__MACOSX|\.DS_Store$/.test(e.name)); } catch {}
+    b.innerHTML = `<div class="empty" style="max-width:640px;width:100%;align-self:flex-start;margin:0 auto"><div style="color:${KIND.zip[1]}">${ic('unzip', 64)}</div>
+      <h2>ملف مضغوط</h2><p>${list.length ? 'عدد الملفات بداخله: ' + list.length : 'تعذّرت قراءة محتويات الملف.'}</p>
+      ${list.length ? `<div class="actions"><button class="btn primary" id="vUnzip">${ic('unzip')}فك الضغط هنا</button></div>
+      <div style="text-align:start;margin-top:18px;font-size:14px;color:var(--ink)">${list.slice(0, 60).map(e => `<div style="padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:10px"><span style="flex:1;word-break:break-word;unicode-bidi:plaintext">${esc(cleanPath(e.name))}</span><span style="color:var(--muted);white-space:nowrap">${fmtSize(e.usize)}</span></div>`).join('')}
+      ${list.length > 60 ? `<p>… وملفات أخرى: ${list.length - 60}</p>` : ''}</div>` : ''}</div>`;
+    const ub = $('#vUnzip'); if (ub) ub.onclick = () => { closeViewer(); extractZip(it); };
+  }
+  else if (k === 'text' && blob.size < 3e6) { const pre = document.createElement('pre'); pre.textContent = await blob.text(); b.innerHTML = ''; b.appendChild(pre); }
+  else {
+    b.innerHTML = `<div class="empty"><div style="color:${KIND[k][1]}">${ic('file', 64)}</div><h2>لا تتوفر معاينة لهذا النوع من الملفات</h2>
+      <p>يمكن فتح الملف في التطبيق المناسب عبر زر «مشاركة»، مثل Pages أو Keynote أو Numbers.</p>
+      <div class="actions"><button class="btn primary" id="vShare2">${ic('share')}مشاركة أو فتح في تطبيق آخر</button></div></div>`;
+    $('#vShare2').onclick = () => shareFile(viewFile);
+  }
+  $('#viewer').classList.add('show');
+}
+function closeViewer(){
+  $('#viewer').classList.remove('show');
+  $('#vbody').innerHTML = '';
+  if (viewURL) URL.revokeObjectURL(viewURL);
+  viewURL = viewItem = viewFile = null;
+}
+async function shareFile(f){
+  try {
+    if (navigator.canShare && navigator.canShare({files:[f]})) { await navigator.share({files:[f], title:f.name}); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+async function shareItem(it){
+  const b = await getBlob(it.id);
+  if (!b) return toast('تعذّر العثور على محتوى الملف.');
+  shareFile(new File([b], it.name, {type: it.mime || b.type}));
+}
+$('#vClose').onclick = closeViewer;
+$('#vShare').onclick = () => viewFile && shareFile(viewFile);
+$('#vOpen').onclick = () => { if (viewURL) { const w = window.open(viewURL, '_blank'); if (!w) toast('تعذّر فتح نافذة جديدة. يمكن استخدام زر «مشاركة» بدلًا من ذلك.'); } };
+
+/* ---------- النسخ الاحتياطي والاستعادة ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+async function buildZip(entries, p){
+  const enc = new TextEncoder(), parts = [], central = [];
+  const now = new Date();
+  const dt = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
+  const dd = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate()) & 0xFFFF;
+  let off = 0, i = 0;
+  for (const e of entries) {
+    if (p.cancelled) return null;
+    i++; p.set('جارٍ تجهيز النسخة: ' + i + ' من ' + entries.length, i / entries.length, e.label || '');
+    const data = new Uint8Array(await e.blob.arrayBuffer());
+    const crc = crc32(data), size = data.length, nb = enc.encode(e.name);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, size, true); lh.setUint32(22, size, true);
+    lh.setUint16(26, nb.length, true); lh.setUint16(28, 0, true);
+    parts.push(lh.buffer, nb, e.blob);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, size, true); ch.setUint32(24, size, true);
+    ch.setUint16(28, nb.length, true); ch.setUint32(42, off, true);
+    central.push(ch.buffer, nb);
+    off += 30 + nb.length + size;
+    if (off > 0xFFFFFFF0) throw new Error('حجم المكتبة يتجاوز 4 غيغابايت، وهو الحد الأقصى للنسخة الاحتياطية الواحدة.');
+  }
+  const cdSize = central.reduce((s, b) => s + b.byteLength, 0);
+  const eo = new DataView(new ArrayBuffer(22));
+  eo.setUint32(0, 0x06054b50, true); eo.setUint16(8, entries.length, true); eo.setUint16(10, entries.length, true);
+  eo.setUint32(12, cdSize, true); eo.setUint32(16, off, true);
+  return new Blob([...parts, ...central, eo.buffer], {type: 'application/zip'});
+}
+async function makeBackup(){
+  const all = await allItems();
+  if (!all.length) return alertBox('المكتبة فارغة', 'لا توجد ملفات أو مجلدات لحفظها في نسخة احتياطية.');
+  if (all.length > 65000) return alertBox('تعذّر إنشاء النسخة', 'عدد العناصر كبير جدًا لنسخة احتياطية واحدة.');
+  const p = progressUI('إنشاء نسخة احتياطية');
+  try {
+    const manifest = {app: 'drive-keeper', version: 1, created: Date.now(), tags, items: all};
+    const entries = [{name: 'drive-keeper-backup.json', blob: new Blob([JSON.stringify(manifest)], {type: 'application/json'})}];
+    for (const f of all.filter(i => i.type === 'file')) { const b = await getBlob(f.id); if (b) entries.push({name: 'files/' + f.id, blob: b, label: f.name}); }
+    const zip = await buildZip(entries, p);
+    p.close();
+    if (!zip) return toast('أُلغي إنشاء النسخة الاحتياطية.');
+    const d = new Date(), pad = n => String(n).padStart(2, '0');
+    const file = new File([zip], 'نسخة-حافظة-الدرايف-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.zip', {type: 'application/zip'});
+    openSheet(`<h3>النسخة الاحتياطية جاهزة</h3><p>الحجم: ${fmtSize(zip.size)}. يُنصح بحفظها في iCloud Drive أو Google Drive عبر خيار «حفظ في الملفات» بعد الضغط على الزر.</p>
+      <div class="actions"><button class="btn primary" id="bkSave">${ic('share')}حفظ النسخة</button><button class="btn" data-x>إغلاق</button></div>`);
+    $('#bkSave').onclick = () => shareFile(file);
+  } catch (e) { p.close(); alertBox('تعذّر إنشاء النسخة الاحتياطية', e.message || String(e)); }
+}
+async function restoreBackup(file){
+  let entries, data;
+  try { entries = await readZip(file); } catch (e) { return alertBox('تعذّرت الاستعادة', e.message || String(e)); }
+  const me = entries.find(e => e.name === 'drive-keeper-backup.json');
+  if (!me) return alertBox('تعذّرت الاستعادة', 'هذا الملف ليس نسخة احتياطية من تطبيق «حافظة الدرايف». لإضافة محتوى ملف مضغوط عادي، يُضاف إلى المكتبة ثم يُستخدم خيار «فك الضغط».');
+  try { data = JSON.parse(await (await zipEntryBlob(file, me, 'application/json')).text()); } catch { return alertBox('تعذّرت الاستعادة', 'ملف النسخة الاحتياطية تالف.'); }
+  const items = Array.isArray(data.items) ? data.items : [];
+  const nFiles = items.filter(i => i.type === 'file').length;
+  const ok = await confirmBox('استعادة نسخة احتياطية',
+    'تاريخ النسخة: ' + fmtDate(data.created) + '. عدد الملفات: ' + nFiles + '. سيُدمج محتواها مع المكتبة الحالية، وتُستبدل العناصر المتطابقة فقط.', 'استعادة');
+  if (!ok) return;
+  const p = progressUI('استعادة النسخة الاحتياطية');
+  const byName = new Map(entries.map(e => [e.name, e]));
+  let done_ = 0, missing = 0, i = 0;
+  try {
+    const tm = new Map(tags.map(t => [t.id, t])); for (const t of (data.tags || [])) tm.set(t.id, t);
+    tags = [...tm.values()]; await saveTags(tags);
+    for (const it of items.filter(x => x.type === 'folder')) await putItem(it);
+    const files = items.filter(x => x.type === 'file');
+    for (const it of files) {
+      if (p.cancelled) break;
+      i++; p.set('جارٍ استعادة الملفات: ' + i + ' من ' + files.length, (i - 1) / files.length, it.name);
+      const en = byName.get('files/' + it.id);
+      if (!en) { missing++; continue; }
+      const b = await zipEntryBlob(file, en, it.mime || guessMime(it.name));
+      await putItem(it, b); done_++;
+    }
+    p.close();
+    requestPersist();
+    toast('اكتملت الاستعادة. الملفات المستعادة: ' + done_ + (missing ? '، والمفقودة من النسخة: ' + missing : '') + '.');
+  } catch (e) { p.close(); alertBox('توقّفت الاستعادة', e.message || String(e)); }
+  go('root');
+}
+$('#restoreInput').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) restoreBackup(f); };
+
+/* ---------- الإعدادات ---------- */
+async function openSettings(){
+  let est = null, persisted = false;
+  try { est = navigator.storage && navigator.storage.estimate ? await navigator.storage.estimate() : null; } catch {}
+  try { persisted = navigator.storage && navigator.storage.persisted ? await navigator.storage.persisted() : false; } catch {}
+  const pct = est && est.quota ? Math.min(100, est.usage / est.quota * 100) : 0;
+  openSheet(`<h3>الإعدادات</h3>
+    <div class="section" style="border:0;margin-top:4px;padding-top:4px">
+      <b>الربط مع Google Drive</b>
+      <p>معرّف العميل (OAuth Client ID) الخاص بالتطبيق، ويُدخَل مرة واحدة فقط.</p>
+      <input class="field" id="cid" placeholder="xxxxxxxx.apps.googleusercontent.com" value="${esc(getCid())}" autocomplete="off" autocapitalize="off">
+      <details><summary>طريقة الحصول على معرّف العميل</summary>
+        <ol class="steps">
+          <li>الدخول إلى <code>console.cloud.google.com</code> وإنشاء مشروع جديد.</li>
+          <li>تفعيل واجهة <b>Google Drive API</b> من قسم «المكتبة».</li>
+          <li>إعداد «شاشة طلب الموافقة» (OAuth consent screen) بنوع «خارجي»، وإضافة البريد الإلكتروني المستخدم ضمن «مستخدمي الاختبار».</li>
+          <li>إنشاء «معرّف عميل OAuth» من نوع «تطبيق ويب»، وإضافة العنوان الآتي ضمن «مصادر JavaScript المعتمدة»:<br><code>${esc(location.origin)}</code></li>
+          <li>نسخ المعرّف ولصقه في الحقل أعلاه ثم الضغط على «حفظ».</li>
+        </ol>
+      </details>
+      <div class="actions"><button class="btn primary" id="saveCid">حفظ</button></div>
+    </div>
+    <div class="section"><b>مساحة التخزين</b>
+      ${est ? `<div class="usage"><div style="width:${pct.toFixed(1)}%"></div></div><p>المستخدَم: ${fmtSize(est.usage)} من أصل ${fmtSize(est.quota)} متاحة للتطبيق تقريبًا.</p>` : '<p>تعذّر قياس المساحة على هذا المتصفح.</p>'}
+      <p>${persisted ? 'التخزين الدائم مُفعَّل، ولن يحذف النظام الملفات تلقائيًا.' : 'التخزين الدائم غير مُفعَّل بعد. يُنصح بإضافة التطبيق إلى الشاشة الرئيسية ثم تفعيله.'}</p>
+      ${persisted ? '' : '<button class="btn" id="persistBtn">تفعيل التخزين الدائم</button>'}
+    </div>
+    <div class="section"><b>النسخ الاحتياطي</b>
+      <p>حفظ المكتبة كاملةً (الملفات والمجلدات والوسوم والمفضّلة) في ملف ZIP واحد، يُحفظ في iCloud Drive أو Google Drive، ثم استعادتها منه عند الحاجة ولو على جهاز آخر.</p>
+      <div class="actions"><button class="btn primary" id="bkMake">${ic('backup')}إنشاء نسخة احتياطية</button><button class="btn" id="bkRestore">${ic('upload')}استعادة من نسخة</button></div>
+    </div>
+    <div class="section"><b>الوسوم</b>
+      <p>عدد الوسوم الحالية: ${tags.length}.</p>
+      <button class="btn" id="tagsBtn">${ic('tag')}إدارة الوسوم</button>
+    </div>
+    <div class="section"><b>إدارة البيانات</b>
+      <p>حذف جميع المجلدات والملفات المحفوظة على هذا الجهاز. لا يؤثّر ذلك في الملفات الأصلية في Google Drive.</p>
+      <button class="btn danger" id="wipe">${ic('trash')}حذف جميع البيانات</button>
+    </div>
+    <div class="actions"><button class="btn" data-x>إغلاق</button></div>
+    <p class="credit">فكرة وتصميم: أ. نهى فالح المطيري</p>`);
+  $('#saveCid').onclick = () => {
+    store.set(LS.cid, $('#cid').value.trim()); token = null;
+    toast('حُفظ معرّف العميل.'); closeSheet();
+    if (getCid() && navigator.onLine) loadGIS().catch(() => {});
+  };
+  const pb = $('#persistBtn');
+  if (pb) pb.onclick = async () => {
+    const ok = await requestPersist();
+    closeSheet();
+    toast(ok ? 'فُعِّل التخزين الدائم.' : 'لم يُفعَّل التخزين الدائم. يُرجى إضافة التطبيق إلى الشاشة الرئيسية ثم المحاولة مجددًا.');
+  };
+  $('#bkMake').onclick = () => { closeSheet(); makeBackup(); };
+  $('#bkRestore').onclick = () => { closeSheet(); $('#restoreInput').click(); };
+  $('#tagsBtn').onclick = () => { closeSheet(); manageTags(); };
+  $('#wipe').onclick = async () => {
+    closeSheet();
+    const ok = await confirmBox('حذف جميع البيانات', 'ستُحذف جميع المجلدات والملفات المحفوظة على هذا الجهاز نهائيًا. هل تريد المتابعة؟', 'حذف الكل', true);
+    if (!ok) return;
+    const t = db.transaction(['items','blobs'], 'readwrite');
+    t.objectStore('items').clear(); t.objectStore('blobs').clear();
+    await done(t); tags = []; await saveTags(tags); current = 'root'; view = 'folder'; toast('حُذفت جميع البيانات.'); render();
+  };
+}
+
+/* ---------- التهيئة ---------- */
+$('#logo').innerHTML = ic('folder', 22);
+$('#settingsBtn').innerHTML = ic('gear');
+$('#searchIc').innerHTML = ic('search', 20);
+$('#driveBtn').innerHTML = ic('cloud') + '<span>استيراد من Google Drive</span>';
+$('#filesBtn').innerHTML = ic('files') + '<span>إضافة من تطبيق الملفات</span>';
+$('#newFolderBtn').innerHTML = ic('newfolder') + '<span>مجلد جديد</span>';
+$('#vClose').innerHTML = ic('x');
+$('#vOpen').innerHTML = ic('open') + '<span>نافذة جديدة</span>';
+$('#vShare').innerHTML = ic('share') + '<span>مشاركة</span>';
+
+$('#settingsBtn').onclick = openSettings;
+$('#selBtn').onclick = () => { selectMode = !selectMode; selected.clear(); render(); };
+$('#sort').value = sortBy;
+$('#sort').onchange = e => { sortBy = e.target.value; store.set('dk.sort', sortBy); render(); };
+$('#driveBtn').onclick = driveImport;
+$('#filesBtn').onclick = filesMenu;
+$('#newFolderBtn').onclick = async () => {
+  if (view !== 'folder' || searchQ) go(current);
+  const n = await askText('مجلد جديد', 'يُنشأ المجلد داخل المجلد المفتوح حاليًا.', '', 'إنشاء', 'اسم المجلد');
+  if (n) { await putItem({id: uid(), parentId: current, name: n, type: 'folder', added: Date.now()}); view = 'folder'; render(); }
+};
+let qT;
+$('#q').addEventListener('input', e => { clearTimeout(qT); qT = setTimeout(() => { searchQ = e.target.value.trim(); render(); }, 200); });
+
+function updateNet(){
+  const on = navigator.onLine;
+  $('#net').classList.toggle('off', !on);
+  $('#net span').textContent = on ? 'متصل' : 'دون اتصال';
+}
+addEventListener('online', updateNet); addEventListener('offline', updateNet); updateNet();
+
+function installHint(){
+  const standalone = navigator.standalone || (matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if (standalone || store.get(LS.hint)) return;
+  $('#installHint').innerHTML = `<div class="hint"><div>${ic('share', 20)}</div>
+    <div>لضمان بقاء الملفات محفوظة وفتح التطبيق دون اتصال، يُنصح بإضافته إلى الشاشة الرئيسية: زر <b>المشاركة</b> في Safari ثم <b>«إضافة إلى الشاشة الرئيسية»</b>. فقد يحذف Safari بيانات المواقع التي لا تُستخدم مدةً طويلة.</div>
+    <button class="x" aria-label="إخفاء">${ic('x', 18)}</button></div>`;
+  $('#installHint .x').onclick = () => { store.set(LS.hint, '1'); $('#installHint').innerHTML = ''; };
+}
+
+(async () => {
+  try { db = await openDB(); }
+  catch (e) {
+    $('#empty').innerHTML = '<div class="empty"><h2>تعذّر فتح مساحة التخزين المحلية</h2><p>يُرجى فتح التطبيق في Safari مباشرةً، وعدم استخدام وضع التصفح الخاص.</p></div>';
+    return;
+  }
+  installHint();
+  try { tags = await getTags(); } catch { tags = []; }
+  render();
+  if (getCid() && navigator.onLine) loadGIS().catch(() => {});
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+})();
+</script>
+</body>
+</html>
