@@ -6,12 +6,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="حافظة الدرايف">
+<meta name="apple-mobile-web-app-title" content="مكتبتي">
 <meta name="theme-color" content="#0f766e">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<title>حافظة الدرايف</title>
+<title>مكتبتي</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17202a;--muted:#64748b;--line:#e2e8f0;--accent:#0f766e;--soft:#e6f6f4;--danger:#b42318;--radius:16px;--shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06)}
 @media (prefers-color-scheme:dark){:root{--bg:#0f1417;--card:#182024;--ink:#e8eef1;--muted:#94a3b8;--line:#26323a;--soft:#12302d;--accent:#14b8a6;--shadow:none}}
@@ -124,7 +124,7 @@ body.selecting .toast{bottom:calc(env(safe-area-inset-bottom) + 96px)}
 <body>
 <header>
   <div class="top">
-    <div class="brand"><div class="logo" id="logo"></div>حافظة الدرايف</div>
+    <div class="brand"><div class="logo" id="logo"></div>مكتبتي</div>
     <div class="net" id="net"><i></i><span>متصل</span></div>
     <button class="iconbtn" id="settingsBtn" aria-label="الإعدادات"></button>
   </div>
@@ -757,7 +757,7 @@ function setView(v, tagId){ view = v; viewTag = tagId || null; searchQ = ''; $('
 function renderChips(){
   const active = searchQ ? '' : view === 'tag' ? 'tag:' + viewTag : view;
   const chip = (k, label, icon, color) => `<button class="chip ${active === k ? 'active' : ''}" data-k="${esc(k)}">${color ? `<i style="background:${color}"></i>` : ic(icon, 16)}${esc(label)}</button>`;
-  $('#chips').innerHTML = chip('folder', 'مكتبتي', 'folder') + chip('fav', 'المفضّلة', 'star') + chip('recent', 'آخر ما فُتح', 'clock')
+  $('#chips').innerHTML = chip('folder', 'الرئيسية', 'folder') + chip('fav', 'المفضّلة', 'star') + chip('recent', 'آخر ما فُتح', 'clock')
     + tags.map(t => chip('tag:' + t.id, t.name, null, t.color)).join('')
     + `<button class="chip ghost" id="manageTagsChip">${ic(tags.length ? 'tag' : 'plus', 16)}${tags.length ? 'إدارة الوسوم' : 'إنشاء وسم'}</button>`;
   $('#chips').querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
@@ -772,12 +772,12 @@ function renderChips(){
 async function renderCrumbs(){
   const path = await pathOf(current);
   if (current !== 'root' && !path.length) current = 'root';
-  const parts = [{id:'root', name:'مكتبتي'}, ...path];
+  const parts = [{id:'root', name:'الرئيسية'}, ...path];
   $('#crumbs').innerHTML = parts.map((p, i) => (i ? '<span class="sep">›</span>' : '') + `<button data-id="${esc(p.id)}">${esc(p.name)}</button>`).join('');
   $('#crumbs').querySelectorAll('button').forEach(b => b.onclick = () => go(b.dataset.id));
 }
 function crumbsText(t){
-  $('#crumbs').innerHTML = `<button data-id="root">مكتبتي</button><span class="sep">›</span><button>${esc(t)}</button>`;
+  $('#crumbs').innerHTML = `<button data-id="root">الرئيسية</button><span class="sep">›</span><button>${esc(t)}</button>`;
   $('#crumbs').querySelector('button').onclick = () => go('root');
 }
 function sortItems(items){
@@ -922,9 +922,9 @@ function pickFolder(title, exclude){
     const draw = async () => {
       const path = await pathOf(at);
       const kids = (await children(at)).filter(c => c.type === 'folder' && !exclude.has(c.id)).sort(nameCmp);
-      const here = path.length ? path[path.length - 1].name : 'مكتبتي';
+      const here = path.length ? path[path.length - 1].name : 'الرئيسية';
       openSheet(`<div class="pick"><h3>${esc(title)}</h3>
-        <div class="crumbs">${[{id:'root', name:'مكتبتي'}, ...path].map((p, i) => (i ? '<span class="sep">›</span>' : '') + `<button data-at="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>
+        <div class="crumbs">${[{id:'root', name:'الرئيسية'}, ...path].map((p, i) => (i ? '<span class="sep">›</span>' : '') + `<button data-at="${esc(p.id)}">${esc(p.name)}</button>`).join('')}</div>
         <div class="menu">${kids.map(k => `<button data-at="${esc(k.id)}">${ic('folder')}<span style="flex:1">${esc(k.name)}</span><span style="color:var(--muted)">‹</span></button>`).join('') || '<p>لا توجد مجلدات فرعية هنا.</p>'}</div>
         <div style="display:flex;gap:8px;align-items:center"><input class="field rtl" id="pkNew" placeholder="إنشاء مجلد جديد هنا" style="margin:8px 0"><button class="btn" id="pkAdd" aria-label="إنشاء">${ic('plus')}</button></div>
         <div class="actions"><button class="btn primary" id="pkHere">${ic('move')}النقل إلى «${esc(here)}»</button><button class="btn" data-x>إلغاء</button></div></div>`);
@@ -1153,7 +1153,7 @@ async function makeBackup(){
     p.close();
     if (!zip) return toast('أُلغي إنشاء النسخة الاحتياطية.');
     const d = new Date(), pad = n => String(n).padStart(2, '0');
-    const file = new File([zip], 'نسخة-حافظة-الدرايف-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.zip', {type: 'application/zip'});
+    const file = new File([zip], 'نسخة-مكتبتي-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.zip', {type: 'application/zip'});
     openSheet(`<h3>النسخة الاحتياطية جاهزة</h3><p>الحجم: ${fmtSize(zip.size)}. يُنصح بحفظها في iCloud Drive أو Google Drive عبر خيار «حفظ في الملفات» بعد الضغط على الزر.</p>
       <div class="actions"><button class="btn primary" id="bkSave">${ic('share')}حفظ النسخة</button><button class="btn" data-x>إغلاق</button></div>`);
     $('#bkSave').onclick = () => shareFile(file);
@@ -1163,7 +1163,7 @@ async function restoreBackup(file){
   let entries, data;
   try { entries = await readZip(file); } catch (e) { return alertBox('تعذّرت الاستعادة', e.message || String(e)); }
   const me = entries.find(e => e.name === 'drive-keeper-backup.json');
-  if (!me) return alertBox('تعذّرت الاستعادة', 'هذا الملف ليس نسخة احتياطية من تطبيق «حافظة الدرايف». لإضافة محتوى ملف مضغوط عادي، يُضاف إلى المكتبة ثم يُستخدم خيار «فك الضغط».');
+  if (!me) return alertBox('تعذّرت الاستعادة', 'هذا الملف ليس نسخة احتياطية من تطبيق «مكتبتي». لإضافة محتوى ملف مضغوط عادي، يُضاف إلى المكتبة ثم يُستخدم خيار «فك الضغط».');
   try { data = JSON.parse(await (await zipEntryBlob(file, me, 'application/json')).text()); } catch { return alertBox('تعذّرت الاستعادة', 'ملف النسخة الاحتياطية تالف.'); }
   const items = Array.isArray(data.items) ? data.items : [];
   const nFiles = items.filter(i => i.type === 'file').length;

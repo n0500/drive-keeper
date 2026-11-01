@@ -1,6 +1,6 @@
 {
-  "name": "حافظة الدرايف",
-  "short_name": "حافظة الدرايف",
+  "name": "مكتبتي",
+  "short_name": "مكتبتي",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
